@@ -1,6 +1,8 @@
 const guessInput = document.getElementById('guess');
 const submitButton = document.getElementById('submit');
 const resetButton = document.getElementById('reset');
+const form = document.getElementById('guess-form');
+
 const messages = document.getElementsByClassName('message');
 const tooHighMessage = document.getElementById('too-high');
 const tooLowMessage = document.getElementById('too-low');
@@ -18,8 +20,8 @@ function getRandomNumber(min, max) {
 }
 
 function hideAllMessages() {
-  for (let elementIndex = 0; elementIndex < messages.length; elementIndex++) {
-    messages[elementIndex].style.display = 'none';
+  for (let i = 0; i < messages.length; i++) {
+    messages[i].style.display = 'none';
   }
 }
 
@@ -30,26 +32,28 @@ function checkGuess() {
   if (Number.isNaN(guess) || guess < 1 || guess > 99) {
     hideAllMessages();
     numberOfGuessesMessage.style.display = '';
-    numberOfGuessesMessage.innerHTML = 'Please enter a number between 1 and 99.';
+    numberOfGuessesMessage.textContent =
+      'Please enter a number between 1 and 99.';
     guessInput.value = '';
     return;
   }
 
-  attempts = attempts + 1;
-
+  attempts += 1;
   hideAllMessages();
 
   if (guess === targetNumber) {
+    const guessWord = attempts === 1 ? 'guess' : 'guesses';
+
     numberOfGuessesMessage.style.display = '';
-    numberOfGuessesMessage.innerHTML = `You made ${attempts} guesses`;
+    numberOfGuessesMessage.innerHTML =
+      `You guessed ${guess}. <br> You made ${attempts} ${guessWord}.`;
 
     correctMessage.style.display = '';
 
     submitButton.disabled = true;
     guessInput.disabled = true;
-  }
-
-  if (guess !== targetNumber) {
+  } else {
+    // wrong guess
     if (guess < targetNumber) {
       tooLowMessage.style.display = '';
     } else {
@@ -57,19 +61,22 @@ function checkGuess() {
     }
 
     const remainingAttempts = maxNumberOfAttempts - attempts;
+    const guessWord = remainingAttempts === 1 ? 'guess' : 'guesses';
 
     numberOfGuessesMessage.style.display = '';
-    numberOfGuessesMessage.innerHTML = `You guessed ${guess}. <br> ${remainingAttempts} guesses remaining`;
-  }
+    numberOfGuessesMessage.innerHTML =
+      `You guessed ${guess}. <br> ${remainingAttempts} ${guessWord} remaining`;
 
-  if (attempts === maxNumberOfAttempts && guess !== targetNumber) {
-    submitButton.disabled = true;
-    guessInput.disabled = true;
+    if (attempts === maxNumberOfAttempts) {
+      submitButton.disabled = true;
+      guessInput.disabled = true;
 
-    hideAllMessages();
-    maxGuessesMessage.style.display = '';
-    numberOfGuessesMessage.style.display = '';
-    numberOfGuessesMessage.innerHTML = `You guessed ${guess}. <br> 0 guesses remaining`;
+      hideAllMessages();
+      maxGuessesMessage.style.display = '';
+      numberOfGuessesMessage.style.display = '';
+      numberOfGuessesMessage.innerHTML =
+        `You guessed ${guess}. <br> 0 guesses remaining`;
+    }
   }
 
   guessInput.value = '';
@@ -95,7 +102,15 @@ function setup() {
   resetButton.style.display = 'none';
 }
 
-submitButton.addEventListener('click', checkGuess);
+// Handle form submit so the page does not reload
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
+  checkGuess();
+});
+
+// Reset button starts a new game
 resetButton.addEventListener('click', setup);
 
+// Initialize game on page load
 setup();
+
