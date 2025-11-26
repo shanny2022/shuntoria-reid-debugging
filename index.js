@@ -68,15 +68,16 @@ function checkGuess() {
       `You guessed ${guess}. <br> ${remainingAttempts} ${guessWord} remaining`;
 
     if (attempts === maxNumberOfAttempts) {
-      submitButton.disabled = true;
-      guessInput.disabled = true;
+  submitButton.disabled = true;
+  guessInput.disabled = true;
 
-      hideAllMessages();
-      maxGuessesMessage.style.display = '';
-      numberOfGuessesMessage.style.display = '';
-      numberOfGuessesMessage.innerHTML =
-        `You guessed ${guess}. <br> 0 guesses remaining`;
-    }
+  // do NOT hide all messages here
+  maxGuessesMessage.style.display = '';
+  numberOfGuessesMessage.style.display = '';
+  numberOfGuessesMessage.innerHTML =
+    `You guessed ${guess}. <br> 0 guesses remaining`;
+}
+
   }
 
   guessInput.value = '';
